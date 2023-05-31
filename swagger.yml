@@ -1,0 +1,147 @@
+swagger: "2.0"
+
+info:
+  description: to do list API
+  version: 1.0.0
+  title: TO DO LIST API
+
+host: "198.1.1.26:8888"
+
+basePath: /api
+
+consumes:
+  - application/json
+
+tags:
+  - name: ToDoList
+
+schemes:
+  - "http"
+  - "https"
+
+responses:
+  Error:
+    description: Unexpected error
+    schema:
+      $ref: "#/definitions/Error"
+
+definitions:
+  GetToDoListRespone:
+    type: array
+    items: 
+      properties: 
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        status:
+          type: string
+          enum:
+            - Doing
+            - Finished                
+  CreateToDoListRequest:
+    properties:
+      title:
+        type: string    
+    
+  Error:
+    type: object
+    description: 錯誤訊息
+    properties:
+      code:
+        type: string
+        description: >
+          描述
+
+          * 'MISSING ${Field} IN REQUEST' - 缺少條件 ${Field}
+        enum:
+          - "MISSING ${Field} IN REQUEST"
+      details:
+        type: string
+        description: 補充
+        example: "Factory"
+    
+paths:
+  /to-do-list:
+    get:
+      summary: get all to do list
+      tags:
+        - ToDoList
+      operationId: GetAllToDoList
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties: 
+              data:
+                $ref: "#/definitions/GetToDoListRespone"
+        default:
+          $ref: "#/responses/Error"
+    
+    post:
+      summary: create to do list
+      tags:
+        - ToDoList
+      operationId: CreateToDoList
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/CreateToDoListRequest"
+      responses:
+        200: 
+          description: OK
+        default:
+          $ref: "#/responses/Error"
+    
+    patch:
+      summary: update status of to do list
+      tags:
+        - ToDoList
+      operationId: UpdateStatus
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            properties: 
+              ID:
+                type: integer
+                format: int64
+      responses:
+        200:
+          description: Status is updated
+        default: 
+          $ref: "#/responses/Error"
+
+    delete:
+      summary:  delete to do list
+      tags:
+        - ToDoList
+      operationId: DeleteToDoLists
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: array
+            items:             
+              type: integer
+              format: int64
+            # properties: 
+            #   ID: 
+            #     type: integer
+            #     format: int64
+            # items: 
+            #   properties: 
+            #     ID:
+            #       type: integer
+            #       format: int64            
+      responses:
+        200:
+          description: Delete OK
+        default: 
+          $ref: "#/responses/Error"
